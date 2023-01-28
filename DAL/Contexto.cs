@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 
-public class Contexto: DbContext
+public class Contexto : DbContext
 {
-    public DbSet<Ocupaciones> Ocupaciones{get; set;}
+    public DbSet<Ocupaciones> Ocupaciones {get; set;}
 
-    public Contexto(DbContextOptions<Contexto> options): base (options)
+    public Contexto (DbContextOptions<Contexto> options): base(options)
     {
     }
 }
