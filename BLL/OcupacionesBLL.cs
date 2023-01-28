@@ -8,29 +8,29 @@ public class OcupacionesBLL{
         _contexto = contexto;
     }
 
-    public bool Exist(int OcupacionId)
+    public bool Existe(int OcupacionId)
     {
-        return _contexto.Ocupaciones.Any( o => o.OcupacionId == OcupacionId); // No entendi bien
+        return _contexto.Ocupaciones.Any( o => o.OcupacionId == OcupacionId); 
     }
 
-    public bool Insert(Ocupaciones ocupaciones)
+    public bool Insertar(Ocupaciones ocupaciones)
     {
         _contexto.Ocupaciones.Add(ocupaciones);
         return _contexto.SaveChanges() > 0;
     }
 
-    public bool Modify(Ocupaciones ocupaciones)
+    public bool Modificar(Ocupaciones ocupaciones)
     {
         _contexto.Entry(ocupaciones).State = EntityState.Modified;
         return _contexto.SaveChanges() > 0;
     }
 
-    public bool Save(Ocupaciones ocupaciones)
+    public bool Guardar(Ocupaciones ocupaciones)
     {
-        if (!Exist(ocupaciones.OcupacionId))
-            return this.Insert(ocupaciones);
+        if (!Existe(ocupaciones.OcupacionId))
+            return this.Insertar(ocupaciones);
         else
-            return this.Modify(ocupaciones);
+            return this.Modificar(ocupaciones);
     }
 
     public bool Eliminar (Ocupaciones ocupaciones)
