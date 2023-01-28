@@ -1,5 +1,4 @@
-﻿@page "/ocupacion"
-@page "/ocupacion/{OcupacionId: int}"
+@page "/ocupacion"
 
 @*Recibir la bll de Ocupaciones Inyectada *@
 @inject OcupacionesBLL ocupacionesBLL
@@ -15,25 +14,29 @@
         display: flex;
     }
 </style>
-<div class="card">
-    <div class="card-header">
-    <h1>Registro de Ocupaciones</h1>
-  </div>
-  <div class="card-body">
-    <label class="form-label">Ocupacion</label>
-    <div id= "search-items">
-        <input type="text" class="form-control" id="texto" >
-        <button type="button" class="btn btn-info">Buscar</button><br>
+<EditForm Model="ocupacion" OnInvalidSubmit="Guardar">
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de Ocupaciones</h1>
+        </div>
+        <div class="card-body">
+            <label class="form-label">Ocupacion</label>
+            <div id= "search-items">
+                <InputNumber @bind-Value="ocupacion.OcupacionId" type="text" class="form-control" id="texto" />
+                <button type="button" class="btn btn-info"@onclick="Buscar">Buscar</button><br>
+            </div>
+            <label class="form-label">Descripcion</label>
+            <InputText @bind-Value="ocupacion.Descripcion" type="text" class="form-control" />
+            <label class="form-label">Salario</label>
+            <InputNumber @bind-Value="ocupacion.Salario" type="text" class="form-control" />
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary"@onclick="Nuevo">Nuevo</button>
+            <button type="button" class="btn btn-success"@onclick="Guardar">Guardar</button>
+            <button type="button" class="btn btn-danger"@onclick="Eliminar">eliminar</button> 
+        </div>
     </div>
-    <label class="form-label">Descripcion</label>
-    <input type="text" class="form-control" >
-  </div>
- <div class="card-footer">
-    <button type="button" class="btn btn-primary">Nuevo</button>
-    <button type="button" class="btn btn-success">Guardar</button>
-    <button type="button" class="btn btn-danger">eliminar</button> 
-  </div>
-</div>
+</EditForm>
 
 @code {
     [Parameter]
@@ -68,7 +71,7 @@
             if(!Validar()){
                 return;
             }
-            if(ocupacionesBLL.Save(this.ocupacion))
+            if(ocupacionesBLL.Guardar(this.ocupacion))
                 this.Nuevo();
         }
 
