@@ -1,0 +1,89 @@
+﻿@page "/ocupacion"
+@page "/ocupacion/{OcupacionId: int}"
+
+@*Recibir la bll de Ocupaciones Inyectada *@
+@inject OcupacionesBLL ocupacionesBLL
+
+<style>
+    .card{
+        width: 500px;
+    }
+    #texto{
+        width: 200px;
+    }
+    #search-items{
+        display: flex;
+    }
+</style>
+<div class="card">
+    <div class="card-header">
+    <h1>Registro de Ocupaciones</h1>
+  </div>
+  <div class="card-body">
+    <label class="form-label">Ocupacion</label>
+    <div id= "search-items">
+        <input type="text" class="form-control" id="texto" >
+        <button type="button" class="btn btn-info">Buscar</button><br>
+    </div>
+    <label class="form-label">Descripcion</label>
+    <input type="text" class="form-control" >
+  </div>
+ <div class="card-footer">
+    <button type="button" class="btn btn-primary">Nuevo</button>
+    <button type="button" class="btn btn-success">Guardar</button>
+    <button type="button" class="btn btn-danger">eliminar</button> 
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public int OcupacionId {get; set;}
+
+    public Ocupaciones ocupacion {get; set;}= new Ocupaciones();
+        protected override void OnInitialized()
+        {
+            if(OcupacionId > 0)
+            {
+                this.ocupacion.OcupacionId = OcupacionId;
+                this.Buscar();
+            }
+        }
+
+        void Buscar()
+        {
+            var ocupacionEncontrada = ocupacionesBLL.Buscar(ocupacion.OcupacionId);
+            if (ocupacionEncontrada != null)
+            {
+                this.ocupacion = ocupacionEncontrada;
+            }
+        }
+
+        void Nuevo()
+        {
+            this.ocupacion = new Ocupaciones();
+        }
+
+        void Guardar()
+        {
+            if(!Validar()){
+                return;
+            }
+            if(ocupacionesBLL.Save(this.ocupacion))
+                this.Nuevo();
+        }
+
+        bool Validar()
+        {
+            if(String.IsNullOrEmpty(ocupacion.Descripcion))
+                return false;
+            else
+                return true;
+        }
+
+        void Eliminar()
+        {
+            if(ocupacionesBLL.Eliminar(ocupacion))
+                this.Nuevo();
+        }
+}
+
