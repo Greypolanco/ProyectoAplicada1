@@ -9,8 +9,13 @@ var ConStr = builder.Configuration.GetConnectionString("ConStr");
 builder.Services.AddDbContext<Contexto>(options =>
 options.UseSqlite(ConStr)
 );
-
+//agregando ocupaciones bll
 builder.Services.AddScoped<OcupacionesBLL>();
+
+//agregando person bll
+builder.Services.AddScoped<PersonBLL>();
+
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
