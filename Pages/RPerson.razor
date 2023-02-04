@@ -42,7 +42,7 @@
             <InputNumber @bind-Value="person.balance"  class="form-control" />
             <label class="form-label">Ocupacion</label>
             <InputSelect @bind-Value="person.occupationId" class="form-control">
-                    @foreach(Ocupaciones ocupaciones in listOccupation){
+                    @foreach(Ocupaciones  ocupaciones in listOccupation){
                         <option value="@ocupaciones.OcupacionId">@ocupaciones.Descripcion</option>
                     }
             </InputSelect>
