@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-public class Lendind{
+public class Lending{
 
     [Key]
 
