@@ -1,0 +1,116 @@
+@page "/person"
+
+@*Recibir la bll de Persons Inyectada *@
+@inject OcupacionesBLL ocupacionesBLL
+@inject PersonBLL personBLL
+
+<style>
+    .card{
+        width: 500px;
+    }
+    #texto{
+        width: 200px;
+    }
+    #search-items{
+        display: flex;
+    }
+</style>
+<EditForm Model="person" OnInvalidSubmit="Guardar">
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de Persons</h1>
+        </div>
+        <div class="card-body">
+            <label class="form-label">person</label>
+            <div id= "search-items">
+                <InputNumber @bind-Value="person.personId"  class="form-control" id="texto" />
+                <button type="button" class="btn btn-info"@onclick="Buscar">Buscar</button><br>
+            </div>
+            <label class="form-label">Nombre</label>
+            <InputText @bind-Value="person.name"  class="form-control" />
+            <label class="form-label">Direccion</label>
+            <InputText @bind-Value="person.address" class="form-control" />
+            <label class="form-label">Email</label>
+            <InputText @bind-Value="person.email" class="form-control" />
+            <label class="form-label">Nacimiento</label>
+            <InputDate @bind-Value="person.birth_date"  class="form-control" />
+            <label class="form-label">Telefono</label>
+            <InputNumber @bind-Value="person.number_pho" class="form-control" />
+            <label class="form-label">Celular</label>
+            <InputNumber @bind-Value="person.number_cel" class="form-control" />
+            <label class="form-label">Balance</label>
+            <InputNumber @bind-Value="person.balance"  class="form-control" />
+            <label class="form-label">Ocupacion</label>
+            <InputSelect @bind-Value="person.occupationId" class="form-control">
+                    @foreach(Ocupaciones ocupaciones in listOccupation){
+                        <option value="@ocupaciones.OcupacionId">@ocupaciones.Descripcion</option>
+                    }
+            </InputSelect>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary"@onclick="Nuevo">Nuevo</button>
+            <button type="button" class="btn btn-success"@onclick="Guardar">Guardar</button>
+            <button type="button" class="btn btn-danger"@onclick="Eliminar">eliminar</button> 
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int personId {get; set;}
+    public int occupationId {get; set;}
+    public Person person {get; set;}= new Person();
+    public Ocupaciones occupation{get; set;} = new Ocupaciones();
+
+    public List<Ocupaciones> listOccupation {get; set;} = new List<Ocupaciones>();
+        protected override void OnInitialized()
+        {
+            this.person.personId = personId;
+            occupation.OcupacionId = occupationId;
+            listOccupation = ocupacionesBLL.GetList(g => true);
+            if(personId > 0)
+            {
+                this.person.personId = personId;
+                this.Buscar();
+            }
+        }
+
+        void Buscar()
+        {
+            var personFound = personBLL.Buscar(person.personId);
+            if(personFound != null)
+            {
+                this.person = personFound;
+            }
+            
+        }
+
+        void Nuevo()
+        {
+            this.person = new Person();
+        }
+
+        void Guardar()
+        {
+            if(!Validar()){
+                return;
+            }
+            if(personBLL.Guardar(this.person))
+                this.Nuevo();
+        }
+
+        bool Validar()
+        {
+            if(String.IsNullOrEmpty(person.name))
+                return false;
+            else
+                return true;
+        }
+
+        void Eliminar()
+        {
+            if(personBLL.Eliminar(person))
+                this.Nuevo();
+        }
+}
+
