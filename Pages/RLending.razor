@@ -1,0 +1,102 @@
+@page "/loan"
+
+@*Recibir la bll de Lending Inyectada *@
+@inject LendingBLL lendingBLL
+
+<style>
+    .card{
+        width: 500px;
+    }
+    #texto{
+        width: 200px;
+    }
+    #search-items{
+        display: flex;
+    }
+</style>
+<EditForm Model="loan" OnInvalidSubmit="Guardar">
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de Prestamos</h1>
+        </div>
+        <div class="card-body">
+            <label class="form-label">PrestamoID</label>
+            <div id= "search-items">
+                <InputNumber @bind-Value="loan.loanId"  class="form-control" id="texto" />
+                <button type="button" class="btn btn-info"@onclick="Buscar">Buscar</button><br>
+            </div>
+            <label class="form-label">Fecha</label>
+            <InputDate @bind-Value="loan.loan_date"  class="form-control" />
+            <label class="form-label">Fecha Expiracion</label>
+            <InputDate @bind-Value="loan.loan_expiration"  class="form-control" />
+            <label class="form-label">PersonaID</label>
+            <InputNumber @bind-Value="loan.personalId" class="form-control" />
+            <label class="form-label">Concepto</label>
+            <InputText @bind-Value="loan.conceit" class="form-control" />
+            <label class="form-label">Monto</label>
+            <InputNumber @bind-Value="loan.total" class="form-control" />
+            <label class="form-label">Balance</label>
+            <InputNumber @bind-Value="loan.balance"  class="form-control" />
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary"@onclick="Nuevo">Nuevo</button>
+            <button type="button" class="btn btn-success"@onclick="Guardar">Guardar</button>
+            <button type="button" class="btn btn-danger"@onclick="Eliminar">eliminar</button> 
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int loanId {get; set;}
+    public Lending loan {get; set;} = new Lending();
+
+        protected override void OnInitialized()
+        {
+            
+            if(loanId > 0)
+            {
+                this.loan.loanId = loanId;
+                this.Buscar();
+            }
+        }
+
+        void Buscar()
+        {
+            var loanFound = lendingBLL.Buscar(loan.loanId);
+            if(loanFound != null)
+            {
+                this.loan = loanFound;
+            }
+            
+        }
+
+        void Nuevo()
+        {
+            this.loan = new Lending();
+        }
+
+        void Guardar()
+        {
+            if(!Validar()){
+                return;
+            }
+            if(lendingBLL.Guardar(this.loan))
+                this.Nuevo();
+        }
+
+        bool Validar()
+        {
+            if(loan.total <= 0)
+                return false;
+            else
+                return true;
+        }
+
+        void Eliminar()
+        {
+            if(lendingBLL.Eliminar(loan))
+                this.Nuevo();
+        }
+}
+
