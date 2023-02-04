@@ -15,6 +15,8 @@ builder.Services.AddScoped<OcupacionesBLL>();
 //agregando person bll
 builder.Services.AddScoped<PersonBLL>();
 
+//agregando Lending bll
+builder.Services.AddScoped<LendingBLL>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
