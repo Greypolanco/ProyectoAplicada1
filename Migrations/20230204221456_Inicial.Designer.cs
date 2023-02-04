@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ProyectoAplicada.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20230204173229_Inicial")]
+    [Migration("20230204221456_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -18,6 +18,35 @@ namespace ProyectoAplicada.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
+
+            modelBuilder.Entity("Lending", b =>
+                {
+                    b.Property<int>("loanId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("balance")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("conceit")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("loan_date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("loan_expiration")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("personalId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<float>("total")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("loanId");
+
+                    b.ToTable("Lending");
+                });
 
             modelBuilder.Entity("Ocupaciones", b =>
                 {

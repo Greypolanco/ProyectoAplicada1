@@ -12,6 +12,24 @@ namespace ProyectoAplicada.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Lending",
+                columns: table => new
+                {
+                    loanId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    loandate = table.Column<DateTime>(name: "loan_date", type: "TEXT", nullable: false),
+                    loanexpiration = table.Column<DateTime>(name: "loan_expiration", type: "TEXT", nullable: false),
+                    personalId = table.Column<int>(type: "INTEGER", nullable: false),
+                    conceit = table.Column<string>(type: "TEXT", nullable: true),
+                    total = table.Column<float>(type: "REAL", nullable: false),
+                    balance = table.Column<float>(type: "REAL", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lending", x => x.loanId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Ocupaciones",
                 columns: table => new
                 {
@@ -49,6 +67,9 @@ namespace ProyectoAplicada.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Lending");
+
             migrationBuilder.DropTable(
                 name: "Ocupaciones");
 
