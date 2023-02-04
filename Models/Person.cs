@@ -13,4 +13,5 @@ public class Person{
     public DateTime birth_date{get; set;}
     public int occupationId{get; set;}
 
+    public float balance {get; set;}
 }
