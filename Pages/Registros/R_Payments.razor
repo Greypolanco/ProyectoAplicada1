@@ -1,0 +1,94 @@
+@page "/pagos"
+@page "/pagos/{PaymentId:int}"
+
+@inject PaymentsBLL paymentsBll
+
+<EditForm Model ="payment" OnInvalidSubmit="Save">
+    <DataAnnotationsValidator/>
+    <div class ="card">
+        <div class="card-header">
+            <h1>Registros de Pagos</h1>
+        </div>
+        <div class="card-body">
+            
+            <label class="form-label">No.Pago</label>
+            <div class="input-group mb-3">
+                <InputNumber @bind-Value="payment.PaymentId" class="form-control" id="texto" />
+                <button type="button" class="btn btn-info">Buscar</button><br>
+            </div>
+
+            <label class="form-label">Fecha</label>
+            <div class="input-group mb-3">
+                <InputDate @bind-Value="payment.Date" class="form-control"/>
+            </div>
+
+            <label class="form-label">No.Persona</label>
+            <div class="input-group mb-3">
+                <InputNumber @bind-Value="payment.PersonId" class="form-control" placeholder="No.persona"/>
+            </div>
+
+            <label class="form-label">Concepto</label>
+            <div class="form-floating mb-3">
+                <input type="concepto" class="form-control" placeholder="concepto">
+                <label for="floatingInput">Concepto</label>
+            </div>
+
+            <label class="form-label">Monto</label>
+            <div class="input-group mb-3">
+                <InputNumber @bind-Value="payment.Total" class="form-control" placeholder="monto"/>
+            </div>
+
+        </div>
+        <div class = "card-footer">
+            <button type="button" class = "btn btn-primary" @onclick="New">Nuevo</button>
+            <button type="button" class="btn btn-success" @onclick="Save">Guardar</button>
+            <button type="button"class="btn btn-danger" @onclick ="Delete">Eliminar</button>
+        </div>
+    </div>
+</EditForm>
+
+@code{
+    [Parameter]
+    public int PaymentId { get; set; }
+    public Payments payment { get; set; } = new Payments();
+
+        protected override void OnInitialized()
+        {
+            if(PaymentId>0){
+                this.payment.PaymentId =PaymentId;
+                this.Search();
+            }
+        }
+    
+    void New(){
+        this.payment = new Payments();
+    }
+
+    void Search(){
+        var paymentInicial = paymentsBll.Search(payment.PaymentId);
+        if(paymentInicial !=null){
+            this.payment = paymentInicial;
+        }
+    }
+
+    void Save(){
+        if(!Validate())
+            return;
+        if(paymentsBll.Save(this.payment))
+            New();
+    }
+    void Delete(){
+        if(paymentsBll.Delete(this.payment))
+            New();
+    }
+
+    bool Validate(){
+        if(string.IsNullOrEmpty(payment.Conceit))
+            return false;
+        if(payment.PersonId <=0)
+            return false;
+        else
+            return true;    
+    }
+
+}
