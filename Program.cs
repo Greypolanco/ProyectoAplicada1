@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+
 using ProyectoAplicada.Data;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
@@ -18,10 +17,12 @@ builder.Services.AddScoped<PersonBLL>();
 //agregando Lending bll
 builder.Services.AddScoped<LendingBLL>();
 
+//agregando Payments bll
+builder.Services.AddScoped<PaymentsBLL>();
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 
 var app = builder.Build();
 
