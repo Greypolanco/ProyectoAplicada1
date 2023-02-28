@@ -7,7 +7,7 @@ public class Payments
     public DateTime Date { get; set; }
     public int PersonId { get; set; }
     public string? Conceit { get; set; }
-    public int Total { get; set; }
+    public float Total { get; set; }
 
     [ForeignKey("PaymentId")]
     public virtual List<PaymentsDetalle> PaymentsDetalle {get; set;}
