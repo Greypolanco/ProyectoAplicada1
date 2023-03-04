@@ -19,7 +19,13 @@ public class PaymentsBLL
         return _context.SaveChanges() >0;
     }
 
-    public bool Modify(Payments payment){
+    public bool Modify(Payments payment)
+    {
+        _context.Database.ExecuteSqlRaw($"Delete from PaymentsDetalle where PaymentId={payment.PaymentId}");
+        foreach(var New in payment.PaymentsDetalle)
+        {
+            _context.Entry(New).State = EntityState.Added;
+        }
         _context.Entry(payment).State = EntityState.Modified;
         return _context.SaveChanges() >0;
     }
@@ -37,10 +43,10 @@ public class PaymentsBLL
     }
 
     public Payments? Search(int paymentID){
-       return _context.Payment.Where(Option => Option.PaymentId == paymentID).AsNoTracking().SingleOrDefault();
+       return _context.Payment.Include(payment => payment.PaymentsDetalle).Where(Option => Option.PaymentId == paymentID).AsNoTracking().SingleOrDefault();
     }
 
     public List<Payments> GetList(Expression<Func<Payments, bool>> criterio){
-        return _context.Payment.AsNoTracking().Where(criterio).ToList();
+        return _context.Payment.Include(payment => payment.PaymentsDetalle).AsNoTracking().Where(criterio).ToList();
     }
 }
