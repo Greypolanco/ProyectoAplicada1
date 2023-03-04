@@ -78,12 +78,34 @@ namespace ProyectoAplicada.Migrations
                     b.Property<int>("PersonId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Total")
-                        .HasColumnType("INTEGER");
+                    b.Property<float>("Total")
+                        .HasColumnType("REAL");
 
                     b.HasKey("PaymentId");
 
                     b.ToTable("Payment");
+                });
+
+            modelBuilder.Entity("PaymentsDetalle", b =>
+                {
+                    b.Property<int>("PaymentDetalleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("LoanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PaidValue")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("PaymentDetalleId");
+
+                    b.HasIndex("PaymentId");
+
+                    b.ToTable("PaymentsDetalle");
                 });
 
             modelBuilder.Entity("Person", b =>
@@ -119,6 +141,20 @@ namespace ProyectoAplicada.Migrations
                     b.HasKey("personId");
 
                     b.ToTable("Person");
+                });
+
+            modelBuilder.Entity("PaymentsDetalle", b =>
+                {
+                    b.HasOne("Payments", null)
+                        .WithMany("PaymentsDetalle")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Payments", b =>
+                {
+                    b.Navigation("PaymentsDetalle");
                 });
 #pragma warning restore 612, 618
         }

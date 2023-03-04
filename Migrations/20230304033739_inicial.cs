@@ -52,7 +52,7 @@ namespace ProyectoAplicada.Migrations
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
                     PersonId = table.Column<int>(type: "INTEGER", nullable: false),
                     Conceit = table.Column<string>(type: "TEXT", nullable: true),
-                    Total = table.Column<int>(type: "INTEGER", nullable: false)
+                    Total = table.Column<float>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,6 +78,32 @@ namespace ProyectoAplicada.Migrations
                 {
                     table.PrimaryKey("PK_Person", x => x.personId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentsDetalle",
+                columns: table => new
+                {
+                    PaymentDetalleId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    PaymentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LoanId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaidValue = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentsDetalle", x => x.PaymentDetalleId);
+                    table.ForeignKey(
+                        name: "FK_PaymentsDetalle_Payment_PaymentId",
+                        column: x => x.PaymentId,
+                        principalTable: "Payment",
+                        principalColumn: "PaymentId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentsDetalle_PaymentId",
+                table: "PaymentsDetalle",
+                column: "PaymentId");
         }
 
         /// <inheritdoc />
@@ -90,10 +116,13 @@ namespace ProyectoAplicada.Migrations
                 name: "Ocupaciones");
 
             migrationBuilder.DropTable(
-                name: "Payment");
+                name: "PaymentsDetalle");
 
             migrationBuilder.DropTable(
                 name: "Person");
+
+            migrationBuilder.DropTable(
+                name: "Payment");
         }
     }
 }
