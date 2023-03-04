@@ -2,93 +2,205 @@
 @page "/pagos/{PaymentId:int}"
 
 @inject PaymentsBLL paymentsBll
+@inject PersonBLL PersonBLL
+@inject LendingBLL lendingbll
 
-<EditForm Model ="payment" OnInvalidSubmit="Save">
-    <DataAnnotationsValidator/>
-    <div class ="card">
+<EditForm Model="payment" OnInvalidSubmit="Save">
+    <DataAnnotationsValidator />
+    <div class="card">
         <div class="card-header">
             <h1>Registros de Pagos</h1>
         </div>
         <div class="card-body">
-            
+
             <label class="form-label">No.Pago</label>
             <div class="input-group mb-3">
                 <InputNumber @bind-Value="payment.PaymentId" class="form-control" id="texto" />
-                <button type="button" class="btn btn-info">Buscar</button><br>
+                <button type="button" @onclick="Search" class="btn btn-info">Buscar</button><br>
             </div>
 
             <label class="form-label">Fecha</label>
             <div class="input-group mb-3">
-                <InputDate @bind-Value="payment.Date" class="form-control"/>
+                <InputDate @bind-Value="payment.Date" class="form-control" />
             </div>
 
-            <label class="form-label">No.Persona</label>
-            <div class="input-group mb-3">
-                <InputNumber @bind-Value="payment.PersonId" class="form-control" placeholder="No.persona"/>
+
+            <div class="col mb-3">
+                <span>Persona</span>
+                <InputSelect @bind-Value="payment.PersonId" @onblur="PersonChange" class="form-select text-14 col-4" >
+                    <option selected hidden value="0">-- Seleccione una persona--</option>
+                    @foreach (var person in people)
+                    {
+                        <option value="@person.personId">@person.personId - @person.name
+                        </option>
+                    }
+                </InputSelect>
             </div>
 
             <label class="form-label">Concepto</label>
             <div class="form-floating mb-3">
-                <input type="concepto" class="form-control" placeholder="concepto">
+                <input type="concepto" @bind-value="payment.Conceit" class="form-control" placeholder="concepto">
                 <label for="floatingInput">Concepto</label>
             </div>
 
             <label class="form-label">Monto</label>
             <div class="input-group mb-3">
-                <InputNumber @bind-Value="payment.Total" class="form-control" placeholder="monto"/>
+                <InputNumber @bind-Value="payment.Total" class="form-control" placeholder="monto" />
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span>
+                        Abonos Realizados
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="input-group d-flex align-items-end">
+                        <div class="flex-fill mx-2">
+                            <label>Prestamo</label>
+                            <InputSelect @bind-Value="detalle.LoanId" 
+                                class="form-select text-14">
+                                <option value="0" selected="selected" disabled="disabled" hidden="hidden">
+                                    -- Seleccione un Prestamo --</option>
+                                @if (lendings != null)
+                                {
+                                    @foreach (var item in lendings)
+                                    {
+                                        <option value="@item.loanId">@item.total (Balance: @item.balance)</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="flex-fill mx-2">
+                            <label>Monto a Pagar</label>
+                            <InputNumber class="form-control" @bind-Value="detalle.PaidValue" />
+                        </div>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary input-group-text" @onclick="AddPayment">
+                                <span class="oi oi-plus"> Agregar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table t">
+                    <thead class="thead">
+                        <tr class="table">
+                            <th>No. Prestamo</th>
+                            <th>Valor a Pagar</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var itemdetalle in payment.PaymentsDetalle)
+                        {
+                            <tr>
+                                <td>@itemdetalle.LoanId</td>
+                                <td>@itemdetalle.PaidValue</td>
+                                <td><span class="btn btn-sm btn-outline-secondary oi oi-x"
+                                    @onclick="@(() => DeletedDetalle(itemdetalle))"></span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
             </div>
 
         </div>
-        <div class = "card-footer">
-            <button type="button" class = "btn btn-primary" @onclick="New">Nuevo</button>
-            <button type="button" class="btn btn-success" @onclick="Save">Guardar</button>
-            <button type="button"class="btn btn-danger" @onclick ="Delete">Eliminar</button>
-        </div>
+    </div>
+    <div class="card-footer">
+        <button type="button" class="btn btn-primary" @onclick="New">Nuevo</button>
+        <button type="button" class="btn btn-success" @onclick="Save">Guardar</button>
+        <button type="button" class="btn btn-danger" @onclick="Delete">Eliminar</button>
     </div>
 </EditForm>
 
-@code{
+@code {
     [Parameter]
     public int PaymentId { get; set; }
+    public PaymentsDetalle detalle { get; set; } = new PaymentsDetalle();
+    public List<Lending> lendings { get; set; } = new List<Lending>();
+    public List<Person> people { get; set; } = new List<Person>();
+    public int personId { get; set; }
     public Payments payment { get; set; } = new Payments();
 
-        protected override void OnInitialized()
+    protected override void OnInitialized()
+    {
+        if (PaymentId > 0)
         {
-            if(PaymentId>0){
-                this.payment.PaymentId =PaymentId;
-                this.Search();
-            }
+            this.payment.PaymentId = PaymentId;
+            this.Search();
         }
-    
-    void New(){
+        people = PersonBLL.GetList(p => true);
+    }
+
+    void New()
+    {
         this.payment = new Payments();
     }
 
-    void Search(){
+    void Search()
+    {
         var paymentInicial = paymentsBll.Search(payment.PaymentId);
-        if(paymentInicial !=null){
+        if (paymentInicial != null)
+        {
             this.payment = paymentInicial;
         }
     }
 
-    void Save(){
-        if(!Validate())
+    void Save()
+    {
+        if (!Validate())
             return;
-        if(paymentsBll.Save(this.payment))
+        if (paymentsBll.Save(this.payment))
             New();
     }
-    void Delete(){
-        if(paymentsBll.Delete(this.payment))
+    void Delete()
+    {
+        if (paymentsBll.Delete(this.payment))
             New();
     }
 
-    bool Validate(){
-        if(string.IsNullOrEmpty(payment.Conceit))
+    void AddPayment()
+    {
+        if (detalle.PaidValue <= 0) return;
+        var lastest = payment.PaymentsDetalle.Find(p => p.LoanId == detalle.LoanId);
+        if (lastest != null)
+        {
+            payment.PaymentsDetalle.Remove(lastest);
+            detalle.PaidValue += lastest.PaidValue;
+
+        }
+        payment.PaymentsDetalle.Add(detalle);
+        detalle = new PaymentsDetalle();
+    }
+    void DeletedDetalle(PaymentsDetalle detalled)
+    {
+        payment.PaymentsDetalle.Remove(detalled);
+        this.detalle = detalled;
+    }
+    void PersonChange()
+    {
+        if (this.personId != payment.PersonId)
+        {
+            lendings = lendingbll.GetList(l => l.personalId == payment.PersonId);
+            payment.PaymentsDetalle = new List<PaymentsDetalle>();
+        }
+        this.personId = payment.PersonId;
+
+    }
+    bool Validate()
+    {
+        if (payment.PaymentsDetalle.Count() < 1)
             return false;
-        if(payment.PersonId <=0)
+        if (payment.PaymentsDetalle.Sum(d => d.PaidValue) != payment.Total)
+            return false;
+        if (string.IsNullOrEmpty(payment.Conceit))
+            return false;
+        if (payment.PersonId <= 0)
             return false;
         else
-            return true;    
+            return true;
     }
 
 }
