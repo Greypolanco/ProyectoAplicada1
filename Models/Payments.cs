@@ -10,5 +10,5 @@ public class Payments
     public float Total { get; set; }
 
     [ForeignKey("PaymentId")]
-    public virtual List<PaymentsDetalle> PaymentsDetalle {get; set;}
+    public virtual List<PaymentsDetalle> PaymentsDetalle {get; set;} = new List<PaymentsDetalle>();
 }
