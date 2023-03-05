@@ -1,0 +1,39 @@
+@page "/Consultapagos"
+
+@inject PaymentsBLL paymentbll
+
+@code{
+
+    public List<Payments> payment = new List<Payments>();
+    
+        protected override void OnInitialized()
+        {
+            payment = paymentbll.GetList(payment => true);
+        }
+}
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Fecha</td>
+            <td>No. Persona</td>
+            <td>Concepto</td>
+            <td>Total</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var payment in payment)
+        {
+            <tr>
+                <td>@payment.PaymentId</td>
+                <td>@payment.Date</td>
+                <td>@payment.PersonId</td>
+                <td>@payment.Conceit</td>
+                <td>@payment.Total</td>
+            </tr>
+        }
+    </tbody>
+</table>
